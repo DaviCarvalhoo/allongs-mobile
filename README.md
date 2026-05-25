@@ -1,12 +1,10 @@
 # All Ong's - Plataforma de Solidariedade Conectada
 
-![All Ong's Banner](https://lh3.googleusercontent.com/aida-public/AB6AXuD9xp8ZVu7hVxdYVkafBGlU2GKl9MQbNFkLCBpTJAowH2G1KpU8bCkHwAI8x4EcKlnqDhRYQpIYOMvpvd90lbWx84Fb3zYbbzx83a3f5tDBp43M0fTfS3y_0eFefq8TIp8sQfTT4jqt7VFPJ2wQe-v86JwMFBLHSFJqFu1xIFvIlzGMKJl4r3Sk8_5PEMJEDUEltRxJvzJqWS5IpZ7-NYBKdSJpX6Y2eTcQOewW-RlTy4j0qhKIYwL8z-W1iCxj1BK8S8KK5pYg)
-
 O All Ong's é uma solução digital full-stack projetada para ser a ponte definitiva entre doadores, voluntários e Organizações Não Governamentais (ONGs). A plataforma simplifica e democratiza o processo de doação, centralizando causas sociais e permitindo que instituições publiquem e gerenciem suas campanhas de captação de recursos com total transparência e engajamento.
 
 Este repositório contém a solução completa dividida em duas partes principais:
 1. **`allongs-app`**: Aplicativo móvel moderno construído com React Native e Expo.
-2. **`allongs-backend`**: API RESTful robusta desenvolvida em Node.js com Express e PostgreSQL.
+2. **`allongs-backend`**: API RESTful robusta desenvolvida em Deno (TypeScript) com Express e PostgreSQL.
 
 ---
 
@@ -20,7 +18,7 @@ A stack de desenvolvimento foi selecionada para garantir escalabilidade, perform
 | **Mobile Framework** | [Expo](https://expo.dev/) | Suite de ferramentas e serviços de build rápidos |
 | **Estilização Mobile** | [NativeWind (v4)](https://www.nativewind.dev/) | Utility-first styling utilizando conceitos de Tailwind CSS |
 | **Navegação** | [React Navigation](https://reactnavigation.org/) | Gerenciamento dinâmico de telas e guias (tabs) |
-| **Backend** | [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/) | Construção da API REST ágil e escalável |
+| **Backend** | [Deno](https://deno.com/) & [Express](https://expressjs.com/) | Construção da API REST ágil e escalável com TypeScript nativo |
 | **Banco de Dados** | [PostgreSQL](https://www.postgresql.org/) | Banco de dados relacional robusto para integridade dos dados |
 | **Autenticação** | [JWT (JSON Web Token)](https://jwt.io/) & [bcryptjs](https://github.com/dcodeIO/bcrypt.js/) | Sessões seguras e criptografia robusta de senhas |
 | **Containerização** | [Docker Compose](https://www.docker.com/) | Orquestração local do banco de dados relacional |
@@ -47,7 +45,7 @@ A stack de desenvolvimento foi selecionada para garantir escalabilidade, perform
 ## Arquitetura de Pastas
 
 ```bash
-allongs-lp/
+allongs-mobile/
 ├── README.md               # Este arquivo de documentação
 ├── allongs-app/            # Aplicativo Móvel (React Native/Expo)
 │   ├── src/
@@ -61,10 +59,10 @@ allongs-lp/
 └── allongs-backend/        # API REST do Servidor
     ├── docker-compose.yml  # Orquestração do banco Postgres local
     ├── src/
-    │   ├── database.js     # Inicialização e schemas de tabelas SQL
-    │   ├── seed.js         # Script para popular dados fictícios iniciais
+    │   ├── database.ts     # Inicialização e schemas de tabelas SQL
+    │   ├── seed.ts         # Script para popular dados fictícios iniciais
     │   ├── routes/         # Rotas divididas por módulos (auth, campaigns, etc.)
-    │   └── server.js       # Ponto de entrada Express
+    │   └── server.ts       # Ponto de entrada Express
     └── .env                # Configurações de ambiente locais
 ```
 
@@ -76,7 +74,7 @@ Siga o passo a passo abaixo para rodar toda a aplicação localmente no seu ambi
 
 > [!IMPORTANT]
 > Certifique-se de ter instalado em sua máquina:
-> * **Node.js** (v18 ou superior)
+> * **Deno** (v2.0 ou superior)
 > * **Docker Desktop**
 > * Um celular com o app **Expo Go** instalado (ou emulador Android/iOS)
 
@@ -96,25 +94,11 @@ Siga o passo a passo abaixo para rodar toda a aplicação localmente no seu ambi
    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/allongs
    ```
 
-3. Suba o container do banco de dados via Docker:
+3. Suba os containers do banco de dados e da API via Docker:
    ```bash
    docker-compose up -d
    ```
 
-4. Instale as dependências do servidor:
-   ```bash
-   npm install
-   ```
-
-5. Execute o script de seeding para criar as tabelas e popular o banco de dados com dados reais de testes (ONGs, doadores, campanhas e histórico de doações):
-   ```bash
-   npm run seed
-   ```
-
-6. Inicie a API em modo de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
    A API rodará no endereço: `http://localhost:3001`
 
 ---
@@ -133,7 +117,7 @@ Siga o passo a passo abaixo para rodar toda a aplicação localmente no seu ambi
 
 3. Inicie o Expo de forma local:
    ```bash
-   npm run start
+   npx expo start --offline
    ```
 
 4. No terminal, será gerado um QR Code:
@@ -145,7 +129,7 @@ Siga o passo a passo abaixo para rodar toda a aplicação localmente no seu ambi
 
 ## Credenciais de Acesso (Teste Rápido)
 
-Após rodar o script `npm run seed`, utilize as seguintes contas fictícias pré-configuradas para explorar os fluxos completos da plataforma:
+Após rodar o script de seed (com `deno task seed` ou executando a API no docker que pode rodar o seed), utilize as seguintes contas fictícias pré-configuradas para explorar os fluxos completos da plataforma:
 
 ### Perfil Doador / Voluntário
 *   **E-mail:** `doador@allongs.com`
