@@ -1,6 +1,7 @@
-const bcrypt = require('bcryptjs');
-const { pool, initDatabase } = require('./database');
-require('dotenv').config();
+import bcrypt from 'bcryptjs';
+import { pool, initDatabase } from './database';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 async function seed() {
   await initDatabase();
@@ -50,7 +51,7 @@ async function seed() {
     );
     const donorId = donorResult.rows[0].id;
 
-    console.log('👤 Users created');
+    console.log('Users created');
 
     // Create campaigns from HTML data
     const campaigns = [
@@ -172,7 +173,7 @@ async function seed() {
       );
     }
 
-    console.log(`🌱 ${campaigns.length} campaigns seeded`);
+    console.log(`${campaigns.length} campaigns seeded`);
 
     // Create some donations for the donor
     const campaignRows = await client.query('SELECT id, title FROM campaigns LIMIT 3');
@@ -192,13 +193,13 @@ async function seed() {
       }
     }
 
-    console.log('💸 Sample donations seeded');
-    console.log('\n✅ Seed complete!');
-    console.log('📧 ONG Login: contato@raizesverdes.org.br / ong123456');
-    console.log('📧 Donor Login: doador@allongs.com / doador123456');
+    console.log('Sample donations seeded');
+    console.log('\nSeed complete!');
+    console.log('ONG Login: contato@raizesverdes.org.br / ong123456');
+    console.log('Donor Login: doador@allongs.com / doador123456');
 
-  } catch (err) {
-    console.error('❌ Seed error:', err);
+  } catch (err: any) {
+    console.error('Seed error:', err);
   } finally {
     client.release();
     await pool.end();

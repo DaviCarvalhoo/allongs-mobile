@@ -1,11 +1,11 @@
-const express = require('express');
-const { pool } = require('../database');
-const { authMiddleware, ongOnly } = require('../middleware/auth');
+import express, { Request, Response } from 'express';
+import { pool } from '../database';
+import { authMiddleware, ongOnly } from '../middleware/auth';
 
 const router = express.Router();
 
 // GET /api/campaigns — List all campaigns (public)
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response): Promise<any> => {
   try {
     const { category, search, limit = 20, offset = 0 } = req.query;
     let query = `
@@ -30,18 +30,18 @@ router.get('/', async (req, res) => {
     }
 
     query += ` ORDER BY c.created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
-    params.push(parseInt(limit), parseInt(offset));
+    params.push(parseInt(limit as string), parseInt(offset as string));
 
     const result = await pool.query(query, params);
     res.json(result.rows);
-  } catch (err) {
+  } catch (err: any) {
     console.error('List campaigns error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/campaigns/featured — Featured campaigns
-router.get('/featured', async (req, res) => {
+router.get('/featured', async (req: Request, res: Response): Promise<any> => {
   try {
     const result = await pool.query(`
       SELECT c.*, u.name as ong_name, u.org_name
@@ -52,14 +52,14 @@ router.get('/featured', async (req, res) => {
       LIMIT 4
     `);
     res.json(result.rows);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Featured campaigns error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/campaigns/urgent — Urgent campaigns
-router.get('/urgent', async (req, res) => {
+router.get('/urgent', async (req: Request, res: Response): Promise<any> => {
   try {
     const result = await pool.query(`
       SELECT c.*, u.name as ong_name, u.org_name
@@ -70,28 +70,28 @@ router.get('/urgent', async (req, res) => {
       LIMIT 5
     `);
     res.json(result.rows);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Urgent campaigns error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/campaigns/my — ONG's own campaigns
-router.get('/my', authMiddleware, ongOnly, async (req, res) => {
+router.get('/my', authMiddleware, ongOnly, async (req: Request, res: Response): Promise<any> => {
   try {
     const result = await pool.query(
       'SELECT * FROM campaigns WHERE ong_id = $1 ORDER BY created_at DESC',
       [req.userId]
     );
     res.json(result.rows);
-  } catch (err) {
+  } catch (err: any) {
     console.error('My campaigns error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/campaigns/:id — Campaign details
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response): Promise<any> => {
   try {
     const result = await pool.query(`
       SELECT c.*, u.name as ong_name, u.org_name, u.org_description, u.org_since, u.avatar_url as ong_avatar
@@ -105,14 +105,14 @@ router.get('/:id', async (req, res) => {
     }
 
     res.json(result.rows[0]);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Campaign detail error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // POST /api/campaigns — Create new campaign (ONG only)
-router.post('/', authMiddleware, ongOnly, async (req, res) => {
+router.post('/', authMiddleware, ongOnly, async (req: Request, res: Response): Promise<any> => {
   try {
     const { title, description, category, goal_amount, image_url, is_urgent, is_public } = req.body;
 
@@ -128,10 +128,10 @@ router.post('/', authMiddleware, ongOnly, async (req, res) => {
     );
 
     res.status(201).json(result.rows[0]);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Create campaign error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
-module.exports = router;
+export default router;

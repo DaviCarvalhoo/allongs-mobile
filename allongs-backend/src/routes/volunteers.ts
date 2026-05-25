@@ -1,11 +1,11 @@
-const express = require('express');
-const { pool } = require('../database');
-const { authMiddleware } = require('../middleware/auth');
+import express, { Request, Response } from 'express';
+import { pool } from '../database';
+import { authMiddleware } from '../middleware/auth';
 
 const router = express.Router();
 
 // POST /api/volunteers — Register as volunteer
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, async (req: Request, res: Response): Promise<any> => {
   try {
     const { skills, availability, bio } = req.body;
 
@@ -28,10 +28,10 @@ router.post('/', authMiddleware, async (req, res) => {
     );
 
     res.status(201).json(result.rows[0]);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Volunteer registration error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
-module.exports = router;
+export default router;

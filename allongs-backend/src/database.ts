@@ -1,5 +1,7 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+import { Pool } from 'pg';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -59,13 +61,13 @@ async function initDatabase() {
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
-    console.log('✅ Database tables created successfully');
-  } catch (err) {
-    console.error('❌ Error creating tables:', err.message);
+    console.log('Database tables created successfully');
+  } catch (err: any) {
+    console.error('Error creating tables:', err.message);
     throw err;
   } finally {
     client.release();
   }
 }
 
-module.exports = { pool, initDatabase };
+export { pool, initDatabase };

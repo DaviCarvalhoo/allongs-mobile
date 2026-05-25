@@ -1,12 +1,12 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { pool } = require('../database');
+import express, { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { pool } from '../database';
 
 const router = express.Router();
 
 // POST /api/auth/register
-router.post('/register', async (req, res) => {
+router.post('/register', async (req: Request, res: Response): Promise<any> => {
   try {
     const { name, email, password, user_type, org_name, org_description, org_since } = req.body;
 
@@ -36,19 +36,19 @@ router.post('/register', async (req, res) => {
     const user = result.rows[0];
     const token = jwt.sign(
       { id: user.id, user_type: user.user_type },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET as string,
       { expiresIn: '30d' }
     );
 
     res.status(201).json({ user, token });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Register error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password } = req.body;
 
@@ -70,20 +70,20 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, user_type: user.user_type },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET as string,
       { expiresIn: '30d' }
     );
 
     const { password_hash, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword, token });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // POST /api/auth/forgot-password
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', async (req: Request, res: Response): Promise<any> => {
   try {
     const { email } = req.body;
 
@@ -94,10 +94,10 @@ router.post('/forgot-password', async (req, res) => {
     const result = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
     // Always return success to avoid email enumeration
     res.json({ message: 'Se o email existir, um link de recuperação será enviado.' });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Forgot password error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
-module.exports = router;
+export default router;

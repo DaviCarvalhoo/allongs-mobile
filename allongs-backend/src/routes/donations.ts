@@ -1,12 +1,12 @@
-const express = require('express');
-const { v4: uuidv4 } = require('uuid');
-const { pool } = require('../database');
-const { authMiddleware, ongOnly } = require('../middleware/auth');
+import express, { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import { pool } from '../database';
+import { authMiddleware, ongOnly } from '../middleware/auth';
 
 const router = express.Router();
 
 // POST /api/donations — Create donation
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, async (req: Request, res: Response): Promise<any> => {
   try {
     const { amount, payment_method, campaign_id } = req.body;
 
@@ -22,7 +22,7 @@ router.post('/', authMiddleware, async (req, res) => {
       const campaign = await pool.query('SELECT title, category FROM campaigns WHERE id = $1', [campaign_id]);
       if (campaign.rows.length > 0) {
         const c = campaign.rows[0];
-        const impactos = {
+        const impactos: { [key: string]: string } = {
           'Reflorestamento da Encosta Norte': `Esta doação permitirá o plantio de ${Math.floor(amount / 6)} mudas nativas.`,
           'Cozinha Solidária Comunitária': `Esta doação garantirá ${Math.floor(amount / 3.75)} refeições nutritivas.`,
           'Patrulhas Florestais de Emergência': `Esta doação financiará ${Math.floor(amount / 100)} dias de patrulha especializada.`,
@@ -57,14 +57,14 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 
     res.status(201).json(result.rows[0]);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Create donation error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/donations/history — Donor's donation history
-router.get('/history', authMiddleware, async (req, res) => {
+router.get('/history', authMiddleware, async (req: Request, res: Response): Promise<any> => {
   try {
     const result = await pool.query(`
       SELECT d.*, c.title as campaign_title, c.category as campaign_category, c.icon as campaign_icon
@@ -75,14 +75,14 @@ router.get('/history', authMiddleware, async (req, res) => {
     `, [req.userId]);
 
     res.json(result.rows);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Donation history error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/donations/received — ONG's received donations
-router.get('/received', authMiddleware, ongOnly, async (req, res) => {
+router.get('/received', authMiddleware, ongOnly, async (req: Request, res: Response): Promise<any> => {
   try {
     const result = await pool.query(`
       SELECT d.*, c.title as campaign_title, c.category as campaign_category,
@@ -95,14 +95,14 @@ router.get('/received', authMiddleware, ongOnly, async (req, res) => {
     `, [req.userId]);
 
     res.json(result.rows);
-  } catch (err) {
+  } catch (err: any) {
     console.error('Received donations error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/donations/stats — Donor stats
-router.get('/stats', authMiddleware, async (req, res) => {
+router.get('/stats', authMiddleware, async (req: Request, res: Response): Promise<any> => {
   try {
     const totalResult = await pool.query(
       'SELECT COALESCE(SUM(amount), 0) as total, COUNT(*) as count FROM donations WHERE user_id = $1',
@@ -119,14 +119,14 @@ router.get('/stats', authMiddleware, async (req, res) => {
       donation_count: parseInt(totalResult.rows[0].count),
       campaigns_supported: parseInt(campaignsSupported.rows[0].count),
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Donation stats error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
 // GET /api/donations/ong-stats — ONG stats
-router.get('/ong-stats', authMiddleware, ongOnly, async (req, res) => {
+router.get('/ong-stats', authMiddleware, ongOnly, async (req: Request, res: Response): Promise<any> => {
   try {
     const raised = await pool.query(`
       SELECT COALESCE(SUM(d.amount), 0) as total, COUNT(d.id) as donation_count
@@ -154,10 +154,10 @@ router.get('/ong-stats', authMiddleware, ongOnly, async (req, res) => {
       campaign_count: parseInt(campaigns.rows[0].count),
       social_reach: '15.4k',
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error('ONG stats error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
-module.exports = router;
+export default router;

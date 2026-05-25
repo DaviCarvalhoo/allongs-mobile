@@ -2,11 +2,11 @@
   "name": "allongs-backend",
   "version": "1.0.0",
   "description": "Backend API for All Ong's - NGO donation platform",
-  "main": "src/server.js",
+  "main": "src/server.ts",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js",
-    "seed": "node src/seed.js"
+    "start": "deno run -A src/server.ts",
+    "dev": "deno run -A --watch src/server.ts",
+    "seed": "deno run -A src/seed.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -16,5 +16,16 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.9.1",
+    "@types/pg": "^8.20.0",
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
   }
 }

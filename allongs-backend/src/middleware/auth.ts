@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express';
 
-function authMiddleware(req, res, next) {
+export function authMiddleware(req: Request, res: Response, next: NextFunction): any {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -15,7 +16,7 @@ function authMiddleware(req, res, next) {
   const token = parts[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
     req.userId = decoded.id;
     req.userType = decoded.user_type;
     return next();
@@ -24,11 +25,10 @@ function authMiddleware(req, res, next) {
   }
 }
 
-function ongOnly(req, res, next) {
+export function ongOnly(req: Request, res: Response, next: NextFunction): any {
   if (req.userType !== 'ong') {
     return res.status(403).json({ error: 'Acesso restrito a ONGs' });
   }
   return next();
 }
 
-module.exports = { authMiddleware, ongOnly };
