@@ -31,8 +31,10 @@ export default function NewCampaignScreen({ navigation }: any) {
       });
       Alert.alert('Sucesso', 'Campanha criada com sucesso!');
       navigation.goBack();
-    } catch (err) {
-      Alert.alert('Erro', 'Não foi possível criar a campanha.');
+    } catch (err: any) {
+      console.error('API Error:', err.response?.data || err.message);
+      const errorMsg = err.response?.data?.error || err.message || 'Erro desconhecido';
+      Alert.alert('Erro', `Não foi possível criar a campanha.\nDetalhe: ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
     }

@@ -21,7 +21,7 @@ services:
       - "3001:3001"
     env_file:
       - .env
-    command: deno run -A --watch src/server.ts
+    command: deno run -A --watch --sloppy-imports src/server.ts
     depends_on:
       - postgres
 

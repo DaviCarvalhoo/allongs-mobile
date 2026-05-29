@@ -19,6 +19,16 @@ export default function RegisterScreen({ route, navigation }: any) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { login } = useContext(AuthContext);
 
+  const validarCnpjONG = async (cnpjLimpo: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+      const data = await response.json();
+      return data.descricao_situacao_cadastral === 'ATIVA';
+    } catch {
+      return false;
+    }
+  };
+
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       alert('As senhas não coincidem');
@@ -29,9 +39,23 @@ export default function RegisterScreen({ route, navigation }: any) {
       return;
     }
 
+    let cnpjLimpo = '';
+    if (role === 'ong') {
+      cnpjLimpo = cnpj.replace(/[^\d]/g, '');
+      if (cnpjLimpo.length !== 14) {
+        alert('CNPJ inválido');
+        return;
+      }
+      const isCnpjValid = await validarCnpjONG(cnpjLimpo);
+      if (!isCnpjValid) {
+        alert('O CNPJ não é válido ou não está com situação ATIVA.');
+        return;
+      }
+    }
+
     try {
       const payload = role === 'ong' 
-        ? { name, email, password, user_type: role, cnpj, phone } 
+        ? { name, email, password, user_type: role, cnpj: cnpjLimpo, phone } 
         : { name, email, password, user_type: role };
       const response = await api.post('/auth/register', payload);
       await login(response.data.token, response.data.user);

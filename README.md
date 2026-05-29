@@ -135,9 +135,14 @@ Após rodar o script de seed (com `deno task seed` ou executando a API no docker
 *   **E-mail:** `doador@allongs.com`
 *   **Senha:** `doador123456`
 
-### Perfil ONG (Instituto Raízes Verdes)
-*   **E-mail:** `contato@raizesverdes.org.br`
-*   **Senha:** `ong123456`
+### Perfis de ONGs (Senha Padrão: `ong123456`)
+*   **Instituto Raízes Verdes:** `contato@raizesverdes.org.br`
+*   **Patas e Esperança:** `contato@patasesperanca.org.br`
+*   **Instituto Saúde Global:** `contato@saudeglobal.org.br`
+*   **Educar para Transformar:** `contato@educarparatransformar.org.br`
+*   **Guardiões da Floresta:** `contato@guardioesdafloresta.org.br`
+*   **Oceanos Limpos Brasil:** `contato@oceanoslimpos.org.br`
+*   **Mesa Solidária:** `contato@mesasolidaria.org.br`
 
 ---
 

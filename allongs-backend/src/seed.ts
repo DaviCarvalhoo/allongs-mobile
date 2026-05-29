@@ -16,9 +16,10 @@ async function seed() {
 
     console.log('🧹 Tables cleaned');
 
-    // Create ONG user
     const ongPassword = await bcrypt.hash('ong123456', 10);
-    const ongResult = await client.query(
+
+    // ─── ONG 1: Instituto Raízes Verdes ───
+    const ong1Result = await client.query(
       `INSERT INTO users (name, email, password_hash, user_type, org_name, org_description, org_since, avatar_url)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id`,
@@ -33,7 +34,117 @@ async function seed() {
         'https://lh3.googleusercontent.com/aida-public/AB6AXuBWioOD5Vo_icDxrxzGvNDCdLjGzdEHNo4jYIwnmFkmEnht45I_ON2yMjViG7Kws6sPgefJ80aSuLLrY4MVao9ER9abuxLslwm_tLv_FdieTT_C5TOw9pC2mO25vV-W1nayd1oaxG6G5sFQgTtHukRuc-oDrUxZJoS0UKEUI0olqqEYYdarIMQlPqrbn7Qrh9trGNFtHbvF90KnfhhyWqQfqC-eyjrey7gRwkLR8igBixwq3kH12wQ6N7IuBuMuSHj3k8xb1Owrhw'
       ]
     );
-    const ongId = ongResult.rows[0].id;
+    const ong1Id = ong1Result.rows[0].id;
+
+    // ─── ONG 2: Patas e Esperança ───
+    const ong2Result = await client.query(
+      `INSERT INTO users (name, email, password_hash, user_type, org_name, org_description, org_since, avatar_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id`,
+      [
+        'Patas e Esperança',
+        'contato@patasesperanca.org.br',
+        ongPassword,
+        'ong',
+        'Patas e Esperança',
+        'A Patas e Esperança é uma ONG dedicada ao resgate, reabilitação e adoção responsável de animais abandonados. Atuamos em centros urbanos oferecendo atendimento veterinário gratuito e programas de conscientização sobre posse responsável.',
+        '2015',
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuBPjTLSTBuQhFKJH60_qYSBmvgaHNcmgrfdLVcf_bbbXDncsGyXl65tmw-jgGn8b1AwGb5IxKVazbdQaL_jfjboCwLm0sAtUbl5w_7YNoIqo4ynmxl1qD1ZNzPJbT99Hv0dDVjsymrzSlVepRfomob3K1ZRkMANw9GYVKuzkwfQouXFChSZfJDScIBWUU04UBBlpeS4GegMEdqeplcYTfPWnkOffYpHeY08UA2axgEI_p62hBqDVTT-BRsJnCGSwqjw1cW1NeEApw'
+      ]
+    );
+    const ong2Id = ong2Result.rows[0].id;
+
+    // ─── ONG 3: Instituto Saúde Global ───
+    const ong3Result = await client.query(
+      `INSERT INTO users (name, email, password_hash, user_type, org_name, org_description, org_since, avatar_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id`,
+      [
+        'Instituto Saúde Global',
+        'contato@saudeglobal.org.br',
+        ongPassword,
+        'ong',
+        'Instituto Saúde Global',
+        'O Instituto Saúde Global atua na distribuição de medicamentos essenciais e kits de diagnóstico para comunidades rurais sem acesso à saúde. Desde 2016, já atendemos mais de 50 mil pacientes em regiões remotas do Brasil.',
+        '2016',
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuAngfupqUISTraP-v4HNL6SzPr4YNTgM4XvLWeuyC-IUm2KJIRHwkh5THB01ajnL-VWRqfcvFdNnyyTsXm7x46F3VFjYrwn-E4otSnIpZxiSQeAkPKyPFm20eOcOZbeJKxKvvvz3czTj0XWofaWSfSkqLBJsRJYRNk7BOPTBDgDsO8CspAAfM91YtobYIA_z_3y1evEYzog-Z3b3bB0bG3wSrsJjiV8UG4jXHkTiyd5OF-1mhrDRqPd8oxZxiYGDTX_2JegguCmKg'
+      ]
+    );
+    const ong3Id = ong3Result.rows[0].id;
+
+    // ─── ONG 4: Educar para Transformar ───
+    const ong4Result = await client.query(
+      `INSERT INTO users (name, email, password_hash, user_type, org_name, org_description, org_since, avatar_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id`,
+      [
+        'Educar para Transformar',
+        'contato@educarparatransformar.org.br',
+        ongPassword,
+        'ong',
+        'Educar para Transformar',
+        'A Educar para Transformar leva educação de qualidade para crianças e jovens em situação de vulnerabilidade. Oferecemos material escolar, acesso digital, reforço pedagógico e programas de alfabetização em comunidades carentes.',
+        '2017',
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuCvxYzim6MpPIf1AvNPzTF6ceVTylZomUZCrLIWmHrXIYxcbobq_lhdhFTUnRb1KoEujKjG79hHdFnhUqeI_D35CXvSvkhNcO9g0NMZuGTx8OqVQGZNQG8feRWBtyYGmFRAA0Xs1476wp1Ftf1EzneV9rW_4A8hUejl3UII7935D3kd1ZhJQjXJaloyffjRe4Y3mLwiBqfytkeZ_Pjw5lx0Ge8s1mBzWiMb8ha1fQB3fz_rbYPytw_3n7ocsNsYz2_-WlYN56AZBA'
+      ]
+    );
+    const ong4Id = ong4Result.rows[0].id;
+
+    // ─── ONG 5: Guardiões da Floresta ───
+    const ong5Result = await client.query(
+      `INSERT INTO users (name, email, password_hash, user_type, org_name, org_description, org_since, avatar_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id`,
+      [
+        'Guardiões da Floresta',
+        'contato@guardioesdafloresta.org.br',
+        ongPassword,
+        'ong',
+        'Guardiões da Floresta',
+        'Os Guardiões da Floresta trabalham na proteção de ecossistemas ameaçados e na conservação de espécies em risco de extinção. Com patrulhas especializadas e programas de reflorestamento, já protegemos mais de 200 mil hectares de mata nativa.',
+        '2014',
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuCPwcydoYf7h58o3U3oMGaXUjQMNNhKGmGbN84N2gxvnWDIUijINh8gE-wQRvmPLLsNlBvOXDPYDxf2OPkuVHNF0lzUYlk2Rx4w6sFCuPDH3HJFaqjVb_Q6WaGd5YFVe_9_Z9zDDOBjrqGnb91xyJHdqlC0w6DQMXswjXsHYr_YF9S2q-VTDnmRQ4Vr1WqgIR-4TA'
+      ]
+    );
+    const ong5Id = ong5Result.rows[0].id;
+
+    // ─── ONG 6: Oceanos Limpos Brasil ───
+    const ong6Result = await client.query(
+      `INSERT INTO users (name, email, password_hash, user_type, org_name, org_description, org_since, avatar_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id`,
+      [
+        'Oceanos Limpos Brasil',
+        'contato@oceanoslimpos.org.br',
+        ongPassword,
+        'ong',
+        'Oceanos Limpos Brasil',
+        'A Oceanos Limpos Brasil é pioneira na limpeza e proteção dos oceanos brasileiros. Desenvolvemos tecnologias inovadoras de filtragem de microplásticos e promovemos ações de conscientização sobre a preservação da vida marinha.',
+        '2019',
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuAHGo5HOzsJjqGpUCD4TpDpzxKmh7HgtDi5CM1h1NOdC841Y-EdUVFEVZbVha4UvAeSr6gosiVLIV2ygOduHVB4fjfm8vajTIed76ZM_9Lidpi3CL57fPp7U5IWvcHZ1fyUSU6yAGM_lqSNWHthVPlUHFquhKA-Ue0RV4nDdKmyjIZynLC9UwO9KVmvsJLYBTA1yXrdc7gzztKuSScxfF6xmIiqsFq3x_hfdFc08QLhDRbT8ArHj2nA3MJlmDkKiroNHuGdZcDMAw'
+      ]
+    );
+    const ong6Id = ong6Result.rows[0].id;
+
+    // ─── ONG 7: Mesa Solidária ───
+    const ong7Result = await client.query(
+      `INSERT INTO users (name, email, password_hash, user_type, org_name, org_description, org_since, avatar_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id`,
+      [
+        'Mesa Solidária',
+        'contato@mesasolidaria.org.br',
+        ongPassword,
+        'ong',
+        'Mesa Solidária',
+        'A Mesa Solidária combate a fome e a insegurança alimentar levando refeições nutritivas e gratuitas para famílias em situação de vulnerabilidade. Já servimos mais de 500 mil refeições desde a nossa fundação.',
+        '2020',
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuDeC98fod1AlzpI-l493Izg4xoLBezmm1zdQ2hztrWfDKEr5KW8xaNLn03_Cs-ZDaoa5iUNDp7JhJvLr3ZbqjQ2BM2Rgcp8GBQ0-H6bGdKCaQaxdVBSOkxT6rvk2cmzJbqOZnRMkIbUuFdrv7pORLQKcEFMKHxtZyI03JzBDu-jNll98RXycmM1mNr2D_8hNTM2iAY4JLFkrqJjNMw9Hx0UGu2-cqYYWu6X_M3B3i7Xg1027MKjPqrKiatTQasaTOotjar-J08-Jg'
+      ]
+    );
+    const ong7Id = ong7Result.rows[0].id;
+
+    console.log('✅ 7 ONGs created');
 
     // Create donor user
     const donorPassword = await bcrypt.hash('doador123456', 10);
@@ -51,9 +162,9 @@ async function seed() {
     );
     const donorId = donorResult.rows[0].id;
 
-    console.log('Users created');
+    console.log('✅ Donor user created');
 
-    // Create campaigns from HTML data
+    // Create campaigns — each associated with its thematic ONG
     const campaigns = [
       {
         title: 'Reflorestamento da Encosta Norte',
@@ -65,7 +176,8 @@ async function seed() {
         percentage_complete: 80,
         donor_count: 324,
         icon: 'park',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD9xp8ZVu7hVxdYVkafBGlU2GKl9MQbNFkLCBpTJAowH2G1KpU8bCkHwAI8x4EcKlnqDhRYQpIYOMvpvd90lbWx84Fb3zYbbzx83a3f5tDBp43M0fTfS3y_0eFefq8TIp8sQfTT4jqt7VFPJ2wQe-v86JwMFBLHSFJqFu1xIFvIlzGMKJl4r3Sk8_5PEMJEDUEltRxJvzJqWS5IpZ7-NYBKdSJpX6Y2eTcQOewW-RlTy4j0qhKIYwL8z-W1iCxj1BK8S8KK5pYg',
+        ong_id: ong1Id,
+        image_url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80',
       },
       {
         title: 'Cozinha Solidária Comunitária',
@@ -77,7 +189,8 @@ async function seed() {
         percentage_complete: 58,
         donor_count: 186,
         icon: 'restaurant',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDpVj8Ae5Y5XSFaWfYsJl9mRwcC-uPpJT3K1SaNqfMSj-K0MfDWcQ1wXoM56A_LVhTbgTgz5fNaL9kpkQFXMUHqIh3RRk8lqkJLIaLK9wuGpPMHkfDjA1pvhwcYGmfPEI5e3LI8kqN4UeZTWx0TU-y4-_H_vwpWcUJCjrQGm2LVpBJ7TkC90w3dI07xpmfXoiAz1FfxTg_n5oZ2_d5EHd-VH7MZzD8eDt8hFCFmFkj7fVcfxHZlsQk6fE2Vr',
+        ong_id: ong7Id,
+        image_url: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=800&q=80',
       },
       {
         title: 'Patrulhas Florestais de Emergência',
@@ -89,7 +202,8 @@ async function seed() {
         percentage_complete: 63,
         donor_count: 412,
         icon: 'pets',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCPwcydoYf7h58o3U3oMGaXUjQMNNhKGmGbN84N2gxvnWDIUijINh8gE-wQRvmPLLsNlBvOXDPYDxf2OPkuVHNF0lzUYlk2Rx4w6sFCuPDH3HJFaqjVb_Q6WaGd5YFVe_9_Z9zDDOBjrqGnb91xyJHdqlC0w6DQMXswjXsHYr_YF9S2q-VTDnmRQ4Vr1WqgIR-4TA',
+        ong_id: ong5Id,
+        image_url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80',
       },
       {
         title: 'Filtros de Microplásticos',
@@ -101,7 +215,8 @@ async function seed() {
         percentage_complete: 35,
         donor_count: 189,
         icon: 'water_drop',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAHGo5HOzsJjqGpUCD4TpDpzxKmh7HgtDi5CM1h1NOdC841Y-EdUVFEVZbVha4UvAeSr6gosiVLIV2ygOduHVB4fjfm8vajTIed76ZM_9Lidpi3CL57fPp7U5IWvcHZ1fyUSU6yAGM_lqSNWHthVPlUHFquhKA-Ue0RV4nDdKmyjIZynLC9UwO9KVmvsJLYBTA1yXrdc7gzztKuSScxfF6xmIiqsFq3x_hfdFc08QLhDRbT8ArHj2nA3MJlmDkKiroNHuGdZcDMAw',
+        ong_id: ong6Id,
+        image_url: 'https://images.unsplash.com/photo-1484291470158-b8f8d608850d?w=800&q=80',
       },
       {
         title: '1 Milhão de Árvores',
@@ -113,7 +228,8 @@ async function seed() {
         percentage_complete: 67,
         donor_count: 856,
         icon: 'forest',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD9xp8ZVu7hVxdYVkafBGlU2GKl9MQbNFkLCBpTJAowH2G1KpU8bCkHwAI8x4EcKlnqDhRYQpIYOMvpvd90lbWx84Fb3zYbbzx83a3f5tDBp43M0fTfS3y_0eFefq8TIp8sQfTT4jqt7VFPJ2wQe-v86JwMFBLHSFJqFu1xIFvIlzGMKJl4r3Sk8_5PEMJEDUEltRxJvzJqWS5IpZ7-NYBKdSJpX6Y2eTcQOewW-RlTy4j0qhKIYwL8z-W1iCxj1BK8S8KK5pYg',
+        ong_id: ong5Id,
+        image_url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=800&q=80',
       },
       {
         title: 'Raízes da Mudança',
@@ -125,7 +241,8 @@ async function seed() {
         percentage_complete: 39,
         donor_count: 142,
         icon: 'eco',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCnbH6U65elujI0EeCoTehN_5V1TZCmpJgXwb3H-f7Vwfj-Df8Thqn-XUvE3rF8e4HUsJ3Bl4h2k1BcGG1th7Ftr0X_GgocDaBXLYGxbVe1YyEwWsiPhF_Y6usN5tIHbShKq-2aCIIS2WWp5hE5uJYI-ftOxsREN0TLbBTnkUPulYVp52lacH_n11HSl7KST5fxvIybwVKo5SPN9hUUxfXkE5RXMQdRAZraC2gjjZQ2fCeQkjtLMXuXaCmG24RDTNXplPgmHWkM_Q',
+        ong_id: ong1Id,
+        image_url: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80',
       },
       {
         title: 'Patas e Abrigo Esperança',
@@ -137,7 +254,8 @@ async function seed() {
         percentage_complete: 65,
         donor_count: 298,
         icon: 'pets',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMqlvMu5wqRP3SMtyjraWZgaUamUvf1UF36okH--z33BinFC8RloSdxkMA1tsMRHQHtcI8R7dNWVX2-8r-AQcbcICePpsf6JA9cqLvaD6kFS2lKKAZL7caC-DuQL0LqSVpvREYAWtBDKLkIbS9qG-kYTORA8tPCJgCx7DtSMa1osyz-Fn1mJcg6xHKhzorTBFMW5l7k9VlQj-Xv-P89BJrSK7Gb7csnAAfNyfQYuU2le9o1QfGJZ445Wu4JUk-l2CVBuh713p70w',
+        ong_id: ong2Id,
+        image_url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&q=80',
       },
       {
         title: 'Acesso Global de Saúde',
@@ -149,7 +267,8 @@ async function seed() {
         percentage_complete: 64,
         donor_count: 521,
         icon: 'medical_services',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBRSmK8h2OL8lL55ots-mwmImc6bfpSFo-fVIxWMROHQry8sb8DvRzO6F4LXMlh5NU9Pj4KrnzjpVa4fkXqIkfMP87JLZt7C3ptGlwiHwT0nvzs-2capEmjbguOYxrRdvqsq6mmAR1_GbNLpmdCkjPlsq-TWHRO6KKd-0mvU87g0FB58th6TIh-M15iBl8h2shAYjva0dKWu4HbDnPRrh31-qkSLSed0nqi2Gk1Kreb-Y9nmvX66ImT6Uea22zXgDAYLdnJ1vb5pg',
+        ong_id: ong3Id,
+        image_url: 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80',
       },
       {
         title: 'Pequenos Estudantes Intl',
@@ -161,7 +280,8 @@ async function seed() {
         percentage_complete: 63,
         donor_count: 367,
         icon: 'school',
-        image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBWgSYcuhM0VROLeIfjJ9EK8gNa-PlmPNdsAiFpQc_WNe6QFfyMD1q4F8GoWPgF7jtAbZ0sI7l7B-5LNokzzu-PwJZvrAEpNFwjExxu5AEBXjf-B8gl49wiknleoMacohPae7uGDNouzC8sB32Szq6yWO64W-CqlDYD0Z3zu6yJLT_6Q3bplYEjXvZ3NAcm-etbkjJQ5fax6HfpyddVRkXoT3NpZ2e7zv4cSA_Vpz5BrvrQYUtO0nDBICLQlyYffzfYg_MupcvkiQ',
+        ong_id: ong4Id,
+        image_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80',
       },
     ];
 
@@ -169,11 +289,11 @@ async function seed() {
       await client.query(
         `INSERT INTO campaigns (title, description, category, goal_amount, raised_amount, image_url, icon, ong_id, is_urgent, is_public, percentage_complete, donor_count)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-        [c.title, c.description, c.category, c.goal_amount, c.raised_amount, c.image_url, c.icon, ongId, c.is_urgent, true, c.percentage_complete, c.donor_count]
+        [c.title, c.description, c.category, c.goal_amount, c.raised_amount, c.image_url, c.icon, c.ong_id, c.is_urgent, true, c.percentage_complete, c.donor_count]
       );
     }
 
-    console.log(`${campaigns.length} campaigns seeded`);
+    console.log(`✅ ${campaigns.length} campaigns seeded`);
 
     // Create some donations for the donor
     const campaignRows = await client.query('SELECT id, title FROM campaigns LIMIT 3');
@@ -193,10 +313,12 @@ async function seed() {
       }
     }
 
-    console.log('Sample donations seeded');
-    console.log('\nSeed complete!');
-    console.log('ONG Login: contato@raizesverdes.org.br / ong123456');
+    console.log('✅ Sample donations seeded');
+    console.log('\n🎉 Seed complete!');
+    console.log('─────────────────────────────────────');
+    console.log('ONG Login (any ONG): contato@raizesverdes.org.br / ong123456');
     console.log('Donor Login: doador@allongs.com / doador123456');
+    console.log('─────────────────────────────────────');
 
   } catch (err: any) {
     console.error('Seed error:', err);

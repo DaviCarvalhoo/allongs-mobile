@@ -71,13 +71,18 @@ export default function CampaignDetailScreen({ route, navigation }: any) {
             className="flex-row items-center mb-6"
             onPress={() => navigation.navigate('NGODetail', { id: campaign.ong_id })}
           >
-            <View className="w-10 h-10 bg-primary-container rounded-full items-center justify-center mr-3">
-              <MaterialIcons name="business" size={20} color="#a8e7c5" />
+            <View className="w-10 h-10 rounded-full items-center justify-center mr-3 overflow-hidden bg-primary-container">
+              {campaign.ong_avatar ? (
+                <Image source={{ uri: campaign.ong_avatar }} className="w-full h-full" resizeMode="cover" />
+              ) : (
+                <MaterialIcons name="business" size={20} color="#a8e7c5" />
+              )}
             </View>
-            <View>
-              <Text className="text-on-surface font-bold">{campaign.ong_name}</Text>
-              <Text className="text-on-surface-variant text-xs">ONG Verificada</Text>
+            <View className="flex-1">
+              <Text className="text-on-surface font-bold">{campaign.ong_name || campaign.org_name}</Text>
+              <Text className="text-on-surface-variant text-xs">ONG Verificada ✓</Text>
             </View>
+            <MaterialIcons name="chevron-right" size={20} color="#707973" />
           </TouchableOpacity>
 
           {/* Progress */}

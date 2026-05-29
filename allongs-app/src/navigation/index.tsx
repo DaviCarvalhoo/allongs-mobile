@@ -18,6 +18,7 @@ import DonorProfileScreen from '../screens/donor/DonorProfileScreen';
 import CampaignDetailScreen from '../screens/donor/CampaignDetailScreen';
 import MakeDonationScreen from '../screens/donor/MakeDonationScreen';
 import DonationConfirmedScreen from '../screens/donor/DonationConfirmedScreen';
+import NGODetailScreen from '../screens/donor/NGODetailScreen';
 
 import ONGHomeScreen from '../screens/ong/ONGHomeScreen';
 import NewCampaignScreen from '../screens/ong/NewCampaignScreen';
@@ -129,11 +130,13 @@ export default function Navigation() {
               <RootStack.Screen name="CampaignDetail" component={CampaignDetailScreen} />
               <RootStack.Screen name="MakeDonation" component={MakeDonationScreen} />
               <RootStack.Screen name="DonationConfirmed" component={DonationConfirmedScreen} />
+              <RootStack.Screen name="NGODetail" component={NGODetailScreen} />
             </>
           ) : (
             <>
               <RootStack.Screen name="ONGApp" component={ONGNavigator} />
               <RootStack.Screen name="NewCampaign" component={NewCampaignScreen} />
+              <RootStack.Screen name="CampaignDetail" component={CampaignDetailScreen} />
             </>
           )}
         </RootStack.Navigator>
