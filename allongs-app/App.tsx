@@ -17,7 +17,7 @@ import {
   Manrope_600SemiBold,
   Manrope_700Bold 
 } from '@expo-google-fonts/manrope';
-import { ActivityIndicator, View } from 'react-native';
+import SplashScreen from './src/components/SplashScreen';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -33,11 +33,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0f5238" />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   return (

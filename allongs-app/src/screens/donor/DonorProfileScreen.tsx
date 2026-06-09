@@ -1,8 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, Alert, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
 import * as Print from 'expo-print';
 import api from '../../services/api';
 
@@ -11,8 +12,31 @@ export default function DonorProfileScreen({ navigation }: any) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [name, setName] = useState(user?.name || '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
+  const [stats, setStats] = useState<any>(null);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      setIsLoadingStats(true);
+      const res = await api.get('/donations/stats');
+      setStats(res.data);
+    } catch (err) {
+      console.error('Failed to fetch donation stats:', err);
+    } finally {
+      setIsLoadingStats(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchStats();
+    }, [fetchStats])
+  );
+
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -45,9 +69,9 @@ export default function DonorProfileScreen({ navigation }: any) {
         api.get('/donations/stats'),
       ]);
       const donations = histRes.data;
-      const stats = statsRes.data;
+      const pdfStats = statsRes.data;
 
-      const formatCurrency = (val: number) =>
+      const fmtCurrency = (val: number) =>
         new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
       const formatDate = (d: string) =>
         new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -56,7 +80,7 @@ export default function DonorProfileScreen({ navigation }: any) {
         <tr>
           <td>${formatDate(d.created_at)}</td>
           <td>${d.campaign_title || '—'}</td>
-          <td>${formatCurrency(parseFloat(d.amount))}</td>
+          <td>${fmtCurrency(parseFloat(d.amount))}</td>
           <td>${d.transaction_id}</td>
           <td>${d.impact_text || '—'}</td>
         </tr>
@@ -87,15 +111,15 @@ export default function DonorProfileScreen({ navigation }: any) {
           
           <div class="stats">
             <div class="stat-card">
-              <div class="stat-value">${formatCurrency(stats.total_donated || 0)}</div>
+              <div class="stat-value">${fmtCurrency(pdfStats.total_donated || 0)}</div>
               <div class="stat-label">Total Doado</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value">${stats.donation_count || 0}</div>
+              <div class="stat-value">${pdfStats.donation_count || 0}</div>
               <div class="stat-label">Doações</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value">${stats.campaigns_supported || 0}</div>
+              <div class="stat-value">${pdfStats.campaigns_supported || 0}</div>
               <div class="stat-label">Campanhas</div>
             </div>
           </div>
@@ -237,7 +261,7 @@ export default function DonorProfileScreen({ navigation }: any) {
                 {user?.name || 'Usuário Doador'}
               </Text>
               <Text className="text-on-surface-variant font-body font-medium mt-1 text-center">
-                Doador e voluntário Ativo
+                Doador Ativo · Transformando Vidas
               </Text>
             </>
           )}
@@ -247,27 +271,39 @@ export default function DonorProfileScreen({ navigation }: any) {
         {!isEditing && (
           <>
             <View className="w-full flex-row gap-4 mb-8">
-              {/* Doações */}
+              {/* Doações — dados reais da API */}
               <View className="flex-1 bg-surface-container-low p-6 rounded-2xl justify-between" style={{ aspectRatio: 1 }}>
                 <View>
                   <MaterialIcons name="favorite" size={28} color="#0f5238" style={{ marginBottom: 8 }} />
                   <Text className="font-headline-bold text-lg text-primary">Doações</Text>
                 </View>
                 <View>
-                  <Text className="text-3xl font-headline-extrabold text-on-surface">R$ 1.250</Text>
+                  {isLoadingStats ? (
+                    <ActivityIndicator size="small" color="#0f5238" style={{ alignSelf: 'flex-start', marginBottom: 4 }} />
+                  ) : (
+                    <Text className="text-3xl font-headline-extrabold text-on-surface">
+                      {formatCurrency(stats?.total_donated || 0)}
+                    </Text>
+                  )}
                   <Text className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">Total Contribuído</Text>
                 </View>
               </View>
 
-              {/* Voluntariado */}
-              <View className="flex-1 p-6 rounded-2xl justify-between" style={{ aspectRatio: 1, backgroundColor: '#a3d8fe' }}>
+              {/* Campanhas Apoiadas — dados reais da API */}
+              <View className="flex-1 p-6 rounded-2xl justify-between" style={{ aspectRatio: 1, backgroundColor: '#d4f5e2' }}>
                 <View>
-                  <MaterialIcons name="schedule" size={28} color="#255f80" style={{ marginBottom: 8 }} />
-                  <Text className="font-headline-bold text-lg" style={{ color: '#255f80' }}>Voluntariado</Text>
+                  <MaterialIcons name="emoji-events" size={28} color="#0f5238" style={{ marginBottom: 8 }} />
+                  <Text className="font-headline-bold text-lg" style={{ color: '#0f5238' }}>Campanhas</Text>
                 </View>
                 <View>
-                  <Text className="text-3xl font-headline-extrabold" style={{ color: '#255f80' }}>48h</Text>
-                  <Text className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: '#255f80', opacity: 0.7 }}>Horas Dedicadas</Text>
+                  {isLoadingStats ? (
+                    <ActivityIndicator size="small" color="#0f5238" style={{ alignSelf: 'flex-start', marginBottom: 4 }} />
+                  ) : (
+                    <Text className="text-3xl font-headline-extrabold" style={{ color: '#0f5238' }}>
+                      {stats?.campaigns_supported || 0}
+                    </Text>
+                  )}
+                  <Text className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: '#0f5238', opacity: 0.7 }}>Causas Apoiadas</Text>
                 </View>
               </View>
             </View>

@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AuthContext } from '../contexts/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import SplashScreen from '../components/SplashScreen';
 
 // We will create these screens shortly
 import WelcomeScreen from '../screens/auth/WelcomeScreen';
@@ -111,11 +112,7 @@ export default function Navigation() {
   console.log('Navigation: isLoading =', isLoading, 'user =', !!user);
 
   if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8f9fa' }}>
-        <ActivityIndicator size="large" color="#0f5238" />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   try {
