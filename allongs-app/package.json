@@ -24,6 +24,7 @@
     "expo-linear-gradient": "~15.0.8",
     "expo-modules-core": "~3.0.30",
     "expo-print": "^56.0.3",
+    "expo-splash-screen": "^56.0.10",
     "expo-status-bar": "~3.0.9",
     "nativewind": "4.1.23",
     "react": "19.1.0",

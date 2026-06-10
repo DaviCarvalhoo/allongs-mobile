@@ -17,7 +17,13 @@ import {
   Manrope_600SemiBold,
   Manrope_700Bold 
 } from '@expo-google-fonts/manrope';
+import * as ExpoSplashScreen from 'expo-splash-screen';
 import SplashScreen from './src/components/SplashScreen';
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+ExpoSplashScreen.preventAutoHideAsync().catch(() => {
+  /* reloading the app might cause this error. */
+});
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -33,7 +39,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return <SplashScreen />;
+    return null; // Keep native splash screen visible
   }
 
   return (

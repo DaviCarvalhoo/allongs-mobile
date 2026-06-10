@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -6,6 +6,8 @@ import { AuthContext } from '../contexts/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import SplashScreen from '../components/SplashScreen';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as ExpoSplashScreen from 'expo-splash-screen';
 
 // We will create these screens shortly
 import WelcomeScreen from '../screens/auth/WelcomeScreen';
@@ -41,6 +43,8 @@ function AuthNavigator() {
 }
 
 function DonorNavigator() {
+  const insets = useSafeAreaInsets();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -51,9 +55,9 @@ function DonorNavigator() {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#e1e3e0',
-          paddingBottom: 5,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 5,
           paddingTop: 5,
-          height: 60,
+          height: 60 + (insets.bottom > 0 ? insets.bottom - 5 : 0),
         },
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap = 'home';
@@ -74,6 +78,8 @@ function DonorNavigator() {
 }
 
 function ONGNavigator() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -84,9 +90,9 @@ function ONGNavigator() {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#e1e3e0',
-          paddingBottom: 5,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 5,
           paddingTop: 5,
-          height: 60,
+          height: 60 + (insets.bottom > 0 ? insets.bottom - 5 : 0),
         },
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap = 'home';
@@ -108,6 +114,19 @@ function ONGNavigator() {
 
 export default function Navigation() {
   const { user, isLoading } = useContext(AuthContext);
+
+  useEffect(() => {
+    // Hide native splash once we reach this component (fonts are loaded)
+    const hideNativeSplash = async () => {
+      try {
+        await ExpoSplashScreen.hideAsync();
+      } catch (e) {
+        // Ignore errors
+      }
+    };
+    
+    hideNativeSplash();
+  }, []);
 
   console.log('Navigation: isLoading =', isLoading, 'user =', !!user);
 

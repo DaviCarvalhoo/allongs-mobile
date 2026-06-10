@@ -3,6 +3,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import { initDatabase } from './database';
+import { seed } from './seed';
 
 import authRoutes from './routes/auth';
 import campaignRoutes from './routes/campaigns';
@@ -47,6 +48,7 @@ app.get('/api/health', (req, res) => {
 async function start() {
   try {
     await initDatabase();
+    await seed();
     app.listen(PORT, () => {
       console.log(`\nAll Ong's Backend running on http://localhost:${PORT}`);
       console.log(`API Base: http://localhost:${PORT}/api`);

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, Easing, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -139,6 +140,7 @@ export default function SplashScreen() {
         backgroundColor: '#0f5238',
       }}
     >
+      <StatusBar style="light" />
       {/* Background decorative elements */}
       <View
         style={{

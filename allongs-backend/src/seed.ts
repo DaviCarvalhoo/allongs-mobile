@@ -3,20 +3,23 @@ import { pool, initDatabase } from './database';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-async function seed() {
+export async function seed() {
   await initDatabase();
 
   const client = await pool.connect();
   try {
-    // Clean tables
-    await client.query('DELETE FROM donations');
-    await client.query('DELETE FROM volunteers');
-    await client.query('DELETE FROM campaigns');
-    await client.query('DELETE FROM users');
+    // Check if we should seed (only if users is empty)
+    const userCount = await client.query('SELECT count(*) FROM users');
+    if (parseInt(userCount.rows[0].count) > 0) {
+      console.log('✨ Database already has data, skipping seed');
+      return;
+    }
 
-    console.log('🧹 Tables cleaned');
+    console.log('🌱 Seeding database...');
 
     const ongPassword = await bcrypt.hash('ong123456', 10);
+
+    // ... (ONG and user creation same as before)
 
     // ─── ONG 1: Instituto Raízes Verdes ───
     const ong1Result = await client.query(
@@ -296,21 +299,29 @@ async function seed() {
     console.log(`✅ ${campaigns.length} campaigns seeded`);
 
     // Create some donations for the donor
-    const campaignRows = await client.query('SELECT id, title FROM campaigns LIMIT 3');
+    const campaignRows = await client.query('SELECT id, title FROM campaigns');
+    const getCampaignId = (title: string) => campaignRows.rows.find(r => r.title === title)?.id;
+
     const sampleDonations = [
-      { amount: 250, campaign_id: campaignRows.rows[0]?.id, payment_method: 'pix', transaction_id: '#AO-4920001', impact_text: 'Esta doação permitirá o plantio de 42 mudas nativas.' },
-      { amount: 100, campaign_id: campaignRows.rows[1]?.id, payment_method: 'cartao', transaction_id: '#AO-4811002', impact_text: 'Esta doação garantirá 27 refeições nutritivas.' },
-      { amount: 500, campaign_id: campaignRows.rows[2]?.id, payment_method: 'pix', transaction_id: '#AO-4765003', impact_text: 'Esta doação financiará 5 dias de patrulha especializada.' },
+      { amount: 250, campaign_id: getCampaignId('Reflorestamento da Encosta Norte'), payment_method: 'pix', transaction_id: '#AO-4920001', impact_text: 'Esta doação permitirá o plantio de 42 mudas nativas.' },
+      { amount: 100, campaign_id: getCampaignId('Cozinha Solidária Comunitária'), payment_method: 'cartao', transaction_id: '#AO-4811002', impact_text: 'Esta doação garantirá 27 refeições nutritivas.' },
+      { amount: 500, campaign_id: getCampaignId('Patrulhas Florestais de Emergência'), payment_method: 'pix', transaction_id: '#AO-4765003', impact_text: 'Esta doação financiará 5 dias de patrulha especializada.' },
+      { amount: 200, campaign_id: null, payment_method: 'pix', transaction_id: '#AO-5160377', impact_text: 'Sua doação fará a diferença!' },
+      { amount: 25, campaign_id: getCampaignId('Cozinha Solidária Comunitária'), payment_method: 'cartao', transaction_id: '#AO-3376147', impact_text: 'Esta doação garantirá 6 refeições nutritivas.' },
+      { amount: 25, campaign_id: getCampaignId('Cozinha Solidária Comunitária'), payment_method: 'pix', transaction_id: '#AO-3956855', impact_text: 'Esta doação garantirá 6 refeições nutritivas.' },
+      { amount: 50, campaign_id: getCampaignId('1 Milhão de Árvores'), payment_method: 'pix', transaction_id: '#AO-1747340', impact_text: 'Esta doação financiará o plantio de 16 árvores nativas.' },
+      { amount: 100, campaign_id: getCampaignId('Patas e Abrigo Esperança'), payment_method: 'pix', transaction_id: '#AO-7231201', impact_text: 'Esta doação fornecerá cuidados para 5 animais resgatados.' },
+      { amount: 50, campaign_id: getCampaignId('1 Milhão de Árvores'), payment_method: 'pix', transaction_id: '#AO-8622752', impact_text: 'Esta doação financiará o plantio de 16 árvores nativas.' },
+      { amount: 100, campaign_id: getCampaignId('Filtros de Microplásticos'), payment_method: 'pix', transaction_id: '#AO-2712019', impact_text: 'Esta doação ajudará a filtrar até 8kg de microplásticos.' },
+      { amount: 200, campaign_id: getCampaignId('Filtros de Microplásticos'), payment_method: 'pix', transaction_id: '#AO-7098491', impact_text: 'Esta doação ajudará a filtrar até 16kg de microplásticos.' },
     ];
 
     for (const d of sampleDonations) {
-      if (d.campaign_id) {
-        await client.query(
-          `INSERT INTO donations (amount, payment_method, user_id, campaign_id, transaction_id, impact_text)
-           VALUES ($1, $2, $3, $4, $5, $6)`,
-          [d.amount, d.payment_method, donorId, d.campaign_id, d.transaction_id, d.impact_text]
-        );
-      }
+      await client.query(
+        `INSERT INTO donations (amount, payment_method, user_id, campaign_id, transaction_id, impact_text)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [d.amount, d.payment_method, donorId, d.campaign_id, d.transaction_id, d.impact_text]
+      );
     }
 
     console.log('✅ Sample donations seeded');
@@ -328,4 +339,6 @@ async function seed() {
   }
 }
 
-seed();
+if (import.meta.main) {
+  seed();
+}
