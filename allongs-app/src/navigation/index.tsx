@@ -51,13 +51,27 @@ function DonorNavigator() {
         headerShown: false,
         tabBarActiveTintColor: '#0f5238',
         tabBarInactiveTintColor: '#707973',
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#e1e3e0',
-          paddingBottom: insets.bottom > 0 ? insets.bottom : 5,
-          paddingTop: 5,
-          height: 60 + (insets.bottom > 0 ? insets.bottom - 5 : 0),
+          height: 70 + (insets.bottom > 0 ? insets.bottom - 10 : 0),
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 12,
+          paddingTop: 12,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'PlusJakartaSans_Medium',
+          fontSize: 11,
+          marginBottom: insets.bottom > 0 ? 0 : 4,
+        },
+        tabBarIconStyle: {
+          marginBottom: 0,
         },
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap = 'home';
@@ -86,13 +100,27 @@ function ONGNavigator() {
         headerShown: false,
         tabBarActiveTintColor: '#0f5238',
         tabBarInactiveTintColor: '#707973',
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#e1e3e0',
-          paddingBottom: insets.bottom > 0 ? insets.bottom : 5,
-          paddingTop: 5,
-          height: 60 + (insets.bottom > 0 ? insets.bottom - 5 : 0),
+          height: 70 + (insets.bottom > 0 ? insets.bottom - 10 : 0),
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 12,
+          paddingTop: 12,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'PlusJakartaSans_Medium',
+          fontSize: 11,
+          marginBottom: insets.bottom > 0 ? 0 : 4,
+        },
+        tabBarIconStyle: {
+          marginBottom: 0,
         },
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap = 'home';

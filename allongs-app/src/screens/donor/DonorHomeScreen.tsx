@@ -46,7 +46,7 @@ export default function DonorHomeScreen({ navigation }: any) {
   const heroCampaign = featured.length > 0 ? featured[0] : null;
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'left', 'right']}>
       {/* Header */}
       <View className="px-6 py-4 flex-row items-center justify-between z-50 bg-[#f8f9fa]/70">
         <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>

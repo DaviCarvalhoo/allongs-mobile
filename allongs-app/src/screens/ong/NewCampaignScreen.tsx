@@ -41,7 +41,7 @@ export default function NewCampaignScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <SafeAreaView className="flex-1 bg-surface" edges={['top', 'left', 'right']}>
       {/* Header */}
       <View className="px-6 py-4 flex-row items-center z-50 bg-[#f8f9fa]/70 absolute top-0 w-full">
         <TouchableOpacity 
