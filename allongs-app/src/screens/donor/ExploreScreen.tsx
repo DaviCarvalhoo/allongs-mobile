@@ -66,7 +66,7 @@ export default function ExploreScreen({ navigation }: any) {
         <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>
       </View>
 
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 100 }}>
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 100 }} keyboardShouldPersistTaps="handled">
 
         {/* Search Bar */}
         <View className="mb-6 mt-2">

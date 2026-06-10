@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import api from '../../services/api';
 
@@ -41,6 +41,7 @@ export default function MakeDonationScreen({ route, navigation }: any) {
 
   return (
     <View className="flex-1 bg-surface">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View className="flex-row items-center p-4 pt-12 border-b border-surface-container-low bg-surface">
         <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
           <MaterialIcons name="arrow-back" size={24} color="#191c1d" />
@@ -48,7 +49,7 @@ export default function MakeDonationScreen({ route, navigation }: any) {
         <Text className="text-xl font-headline font-bold text-on-surface">Fazer Doação</Text>
       </View>
 
-      <ScrollView className="flex-1 p-6">
+      <ScrollView className="flex-1 p-6" keyboardShouldPersistTaps="handled">
         {campaign && (
           <View className="bg-surface-container-low p-4 rounded-2xl mb-8 flex-row items-center">
             <View className="w-12 h-12 bg-primary-container rounded-full items-center justify-center mr-4">
@@ -131,6 +132,7 @@ export default function MakeDonationScreen({ route, navigation }: any) {
           )}
         </TouchableOpacity>
       </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }

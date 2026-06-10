@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../contexts/AuthContext';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -73,6 +73,7 @@ export default function RegisterScreen({ route, navigation }: any) {
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       {/* Header */}
       <View className="px-6 py-4 flex-row items-center z-50 bg-[#f8f9fa]/70 absolute top-0 w-full">
         <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>
@@ -82,7 +83,7 @@ export default function RegisterScreen({ route, navigation }: any) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="flex-1 w-full" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 80, paddingBottom: 48, alignItems: 'center' }}>
+      <ScrollView className="flex-1 w-full" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 80, paddingBottom: 48, alignItems: 'center' }} keyboardShouldPersistTaps="handled">
         <View className="w-full max-w-md bg-surface-container-lowest rounded-xl p-8 lg:p-12 shadow-sm">
           <View className="mb-10 items-center lg:items-start">
             <Text className="font-headline-bold text-2xl text-on-surface mb-2">Crie sua conta</Text>
@@ -234,6 +235,7 @@ export default function RegisterScreen({ route, navigation }: any) {
           </View>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

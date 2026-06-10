@@ -339,6 +339,7 @@ export async function seed() {
   }
 }
 
+// @ts-ignore: Deno specific check
 if (import.meta.main) {
   seed();
 }

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, Alert, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, Alert, ActivityIndicator, Platform, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -174,12 +174,13 @@ export default function DonorProfileScreen({ navigation }: any) {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'left', 'right']}>
-      {/* Header */}
-      <View className="px-6 py-4 flex-row items-center justify-between z-50 bg-[#f8f9fa]/70">
-        <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>
-      </View>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        {/* Header */}
+        <View className="px-6 py-4 flex-row items-center justify-between z-50 bg-[#f8f9fa]/70">
+          <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>
+        </View>
 
-      <ScrollView className="flex-1 w-full" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 48, alignItems: 'center' }}>
+        <ScrollView keyboardShouldPersistTaps="handled" className="flex-1 w-full" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 48, alignItems: 'center' }}>
         
         {/* Hero Profile Section */}
         <View className="flex-col items-center mb-12 mt-4">
@@ -354,7 +355,8 @@ export default function DonorProfileScreen({ navigation }: any) {
           </>
         )}
 
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import api from '../../services/api';
@@ -42,6 +42,7 @@ export default function NewCampaignScreen({ navigation }: any) {
 
   return (
     <SafeAreaView className="flex-1 bg-surface" edges={['top', 'left', 'right']}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       {/* Header */}
       <View className="px-6 py-4 flex-row items-center z-50 bg-[#f8f9fa]/70 absolute top-0 w-full">
         <TouchableOpacity 
@@ -53,7 +54,7 @@ export default function NewCampaignScreen({ navigation }: any) {
         <Text className="text-2xl font-headline-bold tracking-tight text-on-surface">Nova Campanha</Text>
       </View>
 
-      <ScrollView className="flex-1 w-full" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 100, paddingBottom: 48, alignItems: 'center' }}>
+      <ScrollView className="flex-1 w-full" contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 100, paddingBottom: 48, alignItems: 'center' }} keyboardShouldPersistTaps="handled">
         <View className="w-full max-w-md bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/10">
           <View className="mb-8">
             <Text className="font-headline-bold text-2xl text-on-surface mb-2">Crie um movimento</Text>
@@ -168,6 +169,7 @@ export default function NewCampaignScreen({ navigation }: any) {
           </View>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

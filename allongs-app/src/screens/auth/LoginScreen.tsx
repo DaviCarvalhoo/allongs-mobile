@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../contexts/AuthContext';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -32,13 +32,15 @@ export default function LoginScreen({ route, navigation }: any) {
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       {/* Header */}
       <View className="px-6 py-4 flex-row items-center z-50 bg-[#f8f9fa]/70 absolute top-0 w-full">
         <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>
       </View>
 
-      <View className="flex-1 flex-row pt-20 pb-12 px-6 justify-center items-center max-w-6xl mx-auto w-full">
-        {/* Left Image Block (Hidden on Mobile, Visible on lg) */}
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <View className="flex-1 flex-row pt-20 pb-12 px-6 justify-center items-center max-w-6xl mx-auto w-full">
+          {/* Left Image Block (Hidden on Mobile, Visible on lg) */}
         <View className="hidden lg:flex flex-1 relative mr-12">
           <View className="w-full h-[600px] rounded-tl-[3rem] rounded-tr-[3rem] rounded-bl-[3rem] overflow-hidden relative">
             <Image 
@@ -147,6 +149,8 @@ export default function LoginScreen({ route, navigation }: any) {
           </View>
         </View>
       </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
