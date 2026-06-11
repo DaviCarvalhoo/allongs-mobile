@@ -76,7 +76,9 @@ export default function RegisterScreen({ route, navigation }: any) {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       {/* Header */}
       <View className="px-6 py-4 flex-row items-center z-50 bg-[#f8f9fa]/70 absolute top-0 w-full">
-        <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Welcome')}>
+          <Text className="text-3xl font-headline-bold tracking-tight text-primary">All Ong's</Text>
+        </TouchableOpacity>
         <View className="flex-1" />
         <TouchableOpacity onPress={() => navigation.navigate('Login', { role })}>
           <Text className="text-secondary font-label font-semibold text-sm">Log in</Text>
