@@ -80,7 +80,7 @@ router.get('/urgent', async (req: Request, res: Response): Promise<any> => {
 router.get('/my', authMiddleware, ongOnly, async (req: Request, res: Response): Promise<any> => {
   try {
     const result = await pool.query(
-      'SELECT * FROM campaigns WHERE ong_id = $1 ORDER BY created_at DESC',
+      'SELECT * FROM campaigns WHERE ong_id = $1 AND is_public = true ORDER BY created_at DESC',
       [req.userId]
     );
     res.json(result.rows);
@@ -130,6 +130,59 @@ router.post('/', authMiddleware, ongOnly, async (req: Request, res: Response): P
     res.status(201).json(result.rows[0]);
   } catch (err: any) {
     console.error('Create campaign error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+// PUT /api/campaigns/:id — Update campaign (ONG only)
+router.put('/:id', authMiddleware, ongOnly, async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const { title, description, category, goal_amount, image_url, is_urgent } = req.body;
+
+    // Verify campaign exists and belongs to the user
+    const checkResult = await pool.query('SELECT id FROM campaigns WHERE id = $1 AND ong_id = $2 AND is_public = true', [id, req.userId]);
+    
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Campanha não encontrada ou sem permissão' });
+    }
+
+    const result = await pool.query(
+      `UPDATE campaigns SET 
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        category = COALESCE($3, category),
+        goal_amount = COALESCE($4, goal_amount),
+        image_url = COALESCE($5, image_url),
+        is_urgent = COALESCE($6, is_urgent)
+       WHERE id = $7 AND ong_id = $8
+       RETURNING *`,
+      [title, description, category, goal_amount, image_url, is_urgent, id, req.userId]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err: any) {
+    console.error('Update campaign error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+// DELETE /api/campaigns/:id — Delete a campaign (ONG only - Soft Delete)
+router.delete('/:id', authMiddleware, ongOnly, async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+
+    // Verify campaign exists and belongs to the user
+    const checkResult = await pool.query('SELECT id FROM campaigns WHERE id = $1 AND ong_id = $2', [id, req.userId]);
+    
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Campanha não encontrada ou sem permissão' });
+    }
+
+    await pool.query('UPDATE campaigns SET is_public = false WHERE id = $1', [id]);
+    res.json({ message: 'Campanha excluída com sucesso (arquivada)' });
+  } catch (err: any) {
+    console.error('Delete campaign error:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });

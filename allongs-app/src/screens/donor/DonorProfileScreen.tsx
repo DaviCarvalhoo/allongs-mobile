@@ -4,14 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
-import * as Print from 'expo-print';
 import api from '../../services/api';
+import MonthlyExtractModal from '../../components/MonthlyExtractModal';
 
 export default function DonorProfileScreen({ navigation }: any) {
   const { user, logout, updateUser } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
+  const [isExtractVisible, setIsExtractVisible] = useState(false);
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [name, setName] = useState(user?.name || '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
@@ -59,117 +59,6 @@ export default function DonorProfileScreen({ navigation }: any) {
     setName(user?.name || '');
     setAvatarUrl(user?.avatar_url || '');
     setIsEditing(false);
-  };
-
-  const handleExportPDF = async () => {
-    setIsExporting(true);
-    try {
-      const [histRes, statsRes] = await Promise.all([
-        api.get('/donations/history'),
-        api.get('/donations/stats'),
-      ]);
-      const donations = histRes.data;
-      const pdfStats = statsRes.data;
-
-      const fmtCurrency = (val: number) =>
-        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-      const formatDate = (d: string) =>
-        new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-      const rows = donations.map((d: any) => `
-        <tr>
-          <td>${formatDate(d.created_at)}</td>
-          <td>${d.campaign_title || '—'}</td>
-          <td>${fmtCurrency(parseFloat(d.amount))}</td>
-          <td>${d.transaction_id}</td>
-          <td>${d.impact_text || '—'}</td>
-        </tr>
-      `).join('');
-
-      const html = `
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body { font-family: 'Helvetica Neue', sans-serif; padding: 40px; color: #191c1d; }
-            h1 { color: #0f5238; font-size: 28px; margin-bottom: 4px; }
-            .subtitle { color: #707973; font-size: 14px; margin-bottom: 30px; }
-            .stats { display: flex; gap: 20px; margin-bottom: 30px; }
-            .stat-card { background: #f3f4f5; border-radius: 12px; padding: 20px; flex: 1; }
-            .stat-value { font-size: 24px; font-weight: 800; color: #0f5238; }
-            .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #707973; margin-top: 4px; }
-            table { width: 100%; border-collapse: collapse; font-size: 13px; }
-            th { background: #0f5238; color: white; padding: 12px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-            td { padding: 10px; border-bottom: 1px solid #e7e8e9; }
-            tr:nth-child(even) { background: #f8f9fa; }
-            .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #707973; border-top: 1px solid #e7e8e9; padding-top: 20px; }
-          </style>
-        </head>
-        <body>
-          <h1>Extrato de Doações — All Ong's</h1>
-          <p class="subtitle">Doador: ${user?.name || 'Usuário'} · Gerado em ${formatDate(new Date().toISOString())}</p>
-          
-          <div class="stats">
-            <div class="stat-card">
-              <div class="stat-value">${fmtCurrency(pdfStats.total_donated || 0)}</div>
-              <div class="stat-label">Total Doado</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">${pdfStats.donation_count || 0}</div>
-              <div class="stat-label">Doações</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">${pdfStats.campaigns_supported || 0}</div>
-              <div class="stat-label">Campanhas</div>
-            </div>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Campanha</th>
-                <th>Valor</th>
-                <th>ID Transação</th>
-                <th>Impacto</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows || '<tr><td colspan="5" style="text-align:center; padding: 20px;">Nenhuma doação encontrada</td></tr>'}
-            </tbody>
-          </table>
-
-          <div class="footer">
-            All Ong's · Plataforma de Doações · Este documento é um extrato informativo.
-          </div>
-        </body>
-        </html>
-      `;
-
-      // Na Web, expo-print as vezes acaba imprimindo a tela principal.
-      // Abrir um popup com o HTML e imprimir ele resolve esse problema garantindo que só o extrato seja exportado.
-      if (Platform.OS === 'web') {
-        const printWindow = window.open('', '', 'width=800,height=600');
-        if (printWindow) {
-          printWindow.document.write(html);
-          printWindow.document.close();
-          printWindow.focus();
-          printWindow.print();
-          printWindow.close();
-        } else {
-          // Fallback caso o popup seja bloqueado pelo navegador
-          await Print.printAsync({ html });
-        }
-      } else {
-        await Print.printAsync({ html });
-      }
-      
-    } catch (err) {
-      console.error('PDF export error:', err);
-      Alert.alert('Erro', 'Não foi possível gerar o extrato.');
-    } finally {
-      setIsExporting(false);
-    }
   };
 
   return (
@@ -309,25 +198,20 @@ export default function DonorProfileScreen({ navigation }: any) {
               </View>
             </View>
 
-            {/* Export PDF Button */}
+            {/* Export Extract Button */}
             <View className="w-full mb-4">
               <TouchableOpacity
                 className="p-5 rounded-2xl border flex-row items-center"
                 style={{ backgroundColor: 'rgba(177, 240, 206, 0.15)', borderColor: 'rgba(15, 82, 56, 0.1)' }}
                 activeOpacity={0.7}
-                onPress={handleExportPDF}
-                disabled={isExporting}
+                onPress={() => setIsExtractVisible(true)}
               >
                 <View className="p-3 rounded-full bg-primary-fixed">
-                  {isExporting ? (
-                    <ActivityIndicator size={22} color="#0f5238" />
-                  ) : (
-                    <MaterialIcons name="picture-as-pdf" size={22} color="#0f5238" />
-                  )}
+                  <MaterialIcons name="receipt-long" size={22} color="#0f5238" />
                 </View>
                 <View className="ml-4">
-                  <Text className="font-headline-bold text-on-surface text-base">Exportar Extrato</Text>
-                  <Text className="text-sm font-body text-on-surface-variant">Gerar PDF das doações</Text>
+                  <Text className="font-headline-bold text-on-surface text-base">Exportar Extrato Mensal</Text>
+                  <Text className="text-sm font-body text-on-surface-variant">Gerar relatório de doações</Text>
                 </View>
                 <View className="ml-auto">
                   <MaterialIcons name="chevron-right" size={24} color="#707973" />
@@ -357,6 +241,12 @@ export default function DonorProfileScreen({ navigation }: any) {
 
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <MonthlyExtractModal 
+        visible={isExtractVisible} 
+        onClose={() => setIsExtractVisible(false)} 
+        userType="doador" 
+      />
     </SafeAreaView>
   );
 }

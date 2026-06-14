@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../contexts/AuthContext';
 import api from '../../services/api';
+import MonthlyExtractModal from '../../components/MonthlyExtractModal';
 
 export default function ONGProfileScreen({ navigation }: any) {
   const { user, logout, updateUser } = useContext(AuthContext);
@@ -13,6 +14,7 @@ export default function ONGProfileScreen({ navigation }: any) {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isExtractVisible, setIsExtractVisible] = useState(false);
 
   // Editable fields
   const [orgName, setOrgName] = useState(user?.org_name || '');
@@ -294,6 +296,23 @@ export default function ONGProfileScreen({ navigation }: any) {
               </View>
             )}
 
+            {/* Botão Exportar Extrato */}
+            <TouchableOpacity
+              className="mt-6 p-5 rounded-2xl border flex-row items-center bg-surface-container-low"
+              style={{ borderColor: '#e1e3e0' }}
+              onPress={() => setIsExtractVisible(true)}
+              activeOpacity={0.7}
+            >
+              <View className="p-3 rounded-full bg-primary-container">
+                <MaterialIcons name="receipt-long" size={22} color="#0f5238" />
+              </View>
+              <View className="ml-4 flex-1">
+                <Text className="font-headline-bold text-on-surface text-base">Extrato Mensal</Text>
+                <Text className="text-sm font-body text-on-surface-variant">Exportar histórico de recebimentos</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={24} color="#707973" />
+            </TouchableOpacity>
+
             {/* Logout Button */}
             <TouchableOpacity
               className="mt-4 p-5 rounded-2xl border flex-row items-center"
@@ -314,6 +333,13 @@ export default function ONGProfileScreen({ navigation }: any) {
 
         </ScrollView>
       </KeyboardAvoidingView>
+      
+      {/* Modal de Extrato */}
+      <MonthlyExtractModal 
+        visible={isExtractVisible} 
+        onClose={() => setIsExtractVisible(false)} 
+        userType="ong" 
+      />
     </SafeAreaView>
   );
 }

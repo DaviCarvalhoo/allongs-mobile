@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -34,6 +34,32 @@ export default function ONGHomeScreen({ navigation }: any) {
       fetchData();
     }, [fetchData])
   );
+
+  const handleDeleteCampaign = (id: number, title: string) => {
+    Alert.alert(
+      'Excluir Campanha',
+      `Tem certeza que deseja excluir a campanha "${title}"? Esta ação não pode ser desfeita.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { 
+          text: 'Excluir', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await api.delete(`/campaigns/${id}`);
+              setMyCampaigns((prev: any) => prev.filter((c: any) => c.id !== id));
+              // Também atualiza os stats para refletir a remoção
+              fetchData();
+              Alert.alert('Sucesso', 'Campanha excluída com sucesso.');
+            } catch (err: any) {
+              console.error('Failed to delete campaign', err);
+              Alert.alert('Erro', 'Não foi possível excluir a campanha.');
+            }
+          }
+        }
+      ]
+    );
+  };
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
@@ -181,16 +207,36 @@ export default function ONGHomeScreen({ navigation }: any) {
             </View>
           ) : (
             <View className="gap-6">
-              {myCampaigns.map((campaign: any) => (
-                <TouchableOpacity
-                  key={campaign.id}
-                  className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm"
-                  activeOpacity={0.9}
-                  onPress={() => navigation.navigate('CampaignDetail', { id: campaign.id })}
-                >
-                  <View className="flex-row">
-                    {/* Image */}
-                    <View className="w-2/5 min-h-[160px]">
+              {myCampaigns.map((campaign: any) => {
+                const raised = parseFloat(campaign.raised_amount || 0);
+                const goal = parseFloat(campaign.goal_amount || 0);
+                const percent = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;
+                
+                return (
+                  <TouchableOpacity
+                    key={campaign.id}
+                    className="bg-surface-container-lowest mb-6 rounded-3xl overflow-hidden shadow-md border border-outline-variant/20 relative"
+                    activeOpacity={0.9}
+                    onPress={() => navigation.navigate('CampaignDetail', { id: campaign.id })}
+                  >
+                    {/* Botões de Ação */}
+                    <View className="absolute top-4 right-4 z-20 flex-row gap-2">
+                      <TouchableOpacity
+                        className="bg-black/40 p-2 rounded-full"
+                        onPress={() => navigation.navigate('EditCampaign', { campaignId: campaign.id })}
+                      >
+                        <MaterialIcons name="edit" size={20} color="#fff" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        className="bg-black/40 p-2 rounded-full"
+                        onPress={() => handleDeleteCampaign(campaign.id, campaign.title)}
+                      >
+                        <MaterialIcons name="delete-outline" size={20} color="#ffdad6" />
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Imagem de Capa */}
+                    <View className="w-full h-48 bg-surface-container-high relative">
                       {campaign.image_url ? (
                         <Image
                           source={{ uri: campaign.image_url }}
@@ -199,49 +245,71 @@ export default function ONGHomeScreen({ navigation }: any) {
                         />
                       ) : (
                         <View className="w-full h-full bg-primary-container items-center justify-center">
-                          <MaterialIcons name="image" size={32} color="#a8e7c5" />
+                          <MaterialIcons name="image" size={48} color="#a8e7c5" />
+                        </View>
+                      )}
+                      
+                      {campaign.is_urgent && (
+                        <View className="absolute top-4 left-4 bg-error px-3 py-1.5 rounded-full flex-row items-center z-10">
+                          <MaterialIcons name="warning" size={12} color="#fff" />
+                          <Text className="text-white text-xs font-bold ml-1 uppercase">Urgente</Text>
                         </View>
                       )}
                     </View>
 
-                    {/* Content */}
-                    <View className="flex-1 p-5 justify-between">
-                      <View>
-                        <View className="flex-row justify-between items-start mb-2">
-                          <View className="px-2.5 py-1 bg-primary-fixed rounded-full">
-                            <Text className="text-[10px] font-bold uppercase" style={{ color: '#0e5138' }}>
-                              {campaign.category}
+                    {/* Conteúdo */}
+                    <View className="p-5">
+                      <View className="flex-row items-center gap-2 mb-3">
+                        <View className="px-3 py-1 bg-primary-fixed rounded-full">
+                          <Text className="text-[10px] font-bold uppercase tracking-wide text-on-primary-fixed">
+                            {campaign.category || 'Categoria'}
+                          </Text>
+                        </View>
+                        {percent >= 100 && (
+                          <View className="px-3 py-1 bg-[#dcfce7] rounded-full">
+                            <Text className="text-[10px] font-bold uppercase tracking-wide text-[#166534]">
+                              Meta Atingida
                             </Text>
                           </View>
-                          <Text className="text-xs text-on-surface-variant">
-                            {campaign.percentage_complete}%
-                          </Text>
-                        </View>
-                        <Text className="text-base font-headline-bold text-on-surface leading-tight mb-2" numberOfLines={2}>
-                          {campaign.title}
-                        </Text>
+                        )}
                       </View>
 
+                      <Text className="text-xl font-headline-bold text-on-surface leading-tight mb-2" numberOfLines={2}>
+                        {campaign.title}
+                      </Text>
+
+                      <Text className="text-sm font-body text-on-surface-variant mb-6" numberOfLines={2}>
+                        {campaign.description || 'Sem descrição.'}
+                      </Text>
+
+                      {/* Progresso */}
                       <View>
-                        <View className="w-full h-2 bg-surface-container-high rounded-full mb-2">
+                        <View className="flex-row justify-between items-end mb-2">
+                          <Text className="text-sm font-bold text-primary">
+                            {formatCurrency(raised)}
+                          </Text>
+                          <Text className="text-xs font-medium text-on-surface-variant">
+                            de {formatCurrency(goal)}
+                          </Text>
+                        </View>
+                        
+                        <View className="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden">
                           <View
                             className="bg-primary h-full rounded-full"
-                            style={{ width: `${Math.min(campaign.percentage_complete || 0, 100)}%` }}
+                            style={{ width: `${percent}%` }}
                           />
                         </View>
-                        <View className="flex-row justify-between">
-                          <Text className="text-xs font-bold text-on-surface">
-                            {formatCurrency(parseFloat(campaign.raised_amount))}
-                          </Text>
-                          <Text className="text-xs font-bold text-primary">
-                            {formatCurrency(parseFloat(campaign.goal_amount))}
+                        
+                        <View className="flex-row justify-between mt-2">
+                          <Text className="text-xs font-bold text-on-surface-variant">
+                            {percent.toFixed(0)}% alcançado
                           </Text>
                         </View>
                       </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           )}
         </View>

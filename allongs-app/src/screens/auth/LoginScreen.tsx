@@ -9,24 +9,22 @@ import api from '../../services/api';
 export default function LoginScreen({ route, navigation }: any) {
   // get user role if passed from welcome
   const role = route?.params?.role || 'doador';
-  const [email, setEmail] = useState('doador@allongs.com');
-  const [password, setPassword] = useState('doador123456');
+  // Pré-preenche com credenciais de teste corretas para cada perfil
+  const [email, setEmail] = useState(role === 'ong' ? 'contato@raizesverdes.org.br' : 'doador@allongs.com');
+  const [password, setPassword] = useState(role === 'ong' ? 'ong123456' : 'doador123456');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useContext(AuthContext);
 
   const handleLogin = async () => {
+    setError('');
     try {
       const response = await api.post('/auth/login', { email, password });
       await login(response.data.token, response.data.user);
     } catch (err: any) {
-      console.log("Backend offline, usando login de teste");
-      const mockUser = {
-        id: '1',
-        name: 'Usuário Teste',
-        email: email,
-        user_type: role
-      };
-      await login('mock-token-123', mockUser);
+      const msg = err?.response?.data?.error || 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+      setError(msg);
+      console.error('[Login] Erro:', msg);
     }
   };
 
@@ -129,6 +127,12 @@ export default function LoginScreen({ route, navigation }: any) {
               </View>
             </View>
           </View>
+
+          {error ? (
+            <View className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+              <Text className="text-red-600 text-sm font-body text-center">{error}</Text>
+            </View>
+          ) : null}
 
           <TouchableOpacity 
             className="w-full py-4 bg-primary rounded-full items-center shadow-sm"

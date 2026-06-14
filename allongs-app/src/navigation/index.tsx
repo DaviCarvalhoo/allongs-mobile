@@ -25,6 +25,7 @@ import NGODetailScreen from '../screens/donor/NGODetailScreen';
 
 import ONGHomeScreen from '../screens/ong/ONGHomeScreen';
 import NewCampaignScreen from '../screens/ong/NewCampaignScreen';
+import EditCampaignScreen from '../screens/ong/EditCampaignScreen';
 import ONGDonationHistoryScreen from '../screens/ong/ONGDonationHistoryScreen';
 import ONGProfileScreen from '../screens/ong/ONGProfileScreen';
 
@@ -172,6 +173,7 @@ export default function Navigation() {
             <>
               <RootStack.Screen name="ONGApp" component={ONGNavigator} />
               <RootStack.Screen name="NewCampaign" component={NewCampaignScreen} />
+              <RootStack.Screen name="EditCampaign" component={EditCampaignScreen} />
               <RootStack.Screen name="CampaignDetail" component={CampaignDetailScreen} />
             </>
           )}

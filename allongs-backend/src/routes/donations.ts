@@ -160,4 +160,67 @@ router.get('/ong-stats', authMiddleware, ongOnly, async (req: Request, res: Resp
   }
 });
 
+// GET /api/donations/extract — Extract for a specific month
+router.get('/extract', authMiddleware, async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { month, year } = req.query;
+    
+    if (!month || !year) {
+      return res.status(400).json({ error: 'Mês e ano são obrigatórios' });
+    }
+
+    const m = parseInt(month as string);
+    const y = parseInt(year as string);
+
+    let query = '';
+    let params = [];
+
+    // Cast userType since authMiddleware populates it
+    const userType = (req as any).userType;
+
+    if (userType === 'ong') {
+      query = `
+        SELECT d.id, d.amount, d.payment_method, d.transaction_id, d.created_at, 
+               c.title as campaign_title, u.name as donor_name
+        FROM donations d
+        JOIN campaigns c ON d.campaign_id = c.id
+        LEFT JOIN users u ON d.user_id = u.id
+        WHERE c.ong_id = $1 
+          AND EXTRACT(MONTH FROM d.created_at) = $2 
+          AND EXTRACT(YEAR FROM d.created_at) = $3
+        ORDER BY d.created_at DESC
+      `;
+      params = [req.userId, m, y];
+    } else {
+      query = `
+        SELECT d.id, d.amount, d.payment_method, d.transaction_id, d.created_at, 
+               c.title as campaign_title, u.org_name as ong_name
+        FROM donations d
+        LEFT JOIN campaigns c ON d.campaign_id = c.id
+        LEFT JOIN users u ON c.ong_id = u.id
+        WHERE d.user_id = $1 
+          AND EXTRACT(MONTH FROM d.created_at) = $2 
+          AND EXTRACT(YEAR FROM d.created_at) = $3
+        ORDER BY d.created_at DESC
+      `;
+      params = [req.userId, m, y];
+    }
+
+    const result = await pool.query(query, params);
+    const total = result.rows.reduce((sum, row) => sum + parseFloat(row.amount), 0);
+    
+    res.json({
+      donations: result.rows,
+      total_amount: total,
+      count: result.rows.length,
+      month: m,
+      year: y
+    });
+
+  } catch (err: any) {
+    console.error('Extract error:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
 export default router;
