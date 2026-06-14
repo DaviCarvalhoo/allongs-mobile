@@ -39,7 +39,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return null; // Keep native splash screen visible
+    return <SplashScreen />; // Render animated splash while fonts are downloading
   }
 
   return (

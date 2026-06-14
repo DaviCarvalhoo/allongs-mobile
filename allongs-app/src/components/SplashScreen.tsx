@@ -226,7 +226,6 @@ export default function SplashScreen() {
             fontWeight: '800',
             color: '#ffffff',
             letterSpacing: -1,
-            fontFamily: 'PlusJakartaSans_ExtraBold',
           }}
         >
           All Ong's
@@ -245,7 +244,7 @@ export default function SplashScreen() {
           style={{
             fontSize: 15,
             color: 'rgba(177, 240, 206, 0.7)',
-            fontFamily: 'Manrope_Medium',
+            fontWeight: '500',
             letterSpacing: 2,
             textTransform: 'uppercase',
           }}

@@ -1,23 +1,26 @@
 {
   "expo": {
-    "name": "allongs-app",
+    "name": "All Ongs",
     "slug": "allongs-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon-custom.png",
+    "backgroundColor": "#0f5238",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash-custom.png",
       "resizeMode": "contain",
       "backgroundColor": "#0f5238"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "backgroundColor": "#0f5238"
     },
     "android": {
+      "backgroundColor": "#0f5238",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon-custom.png",
+        "backgroundColor": "#0f5238"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
