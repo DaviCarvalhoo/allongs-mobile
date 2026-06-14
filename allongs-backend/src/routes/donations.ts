@@ -143,7 +143,7 @@ router.get('/ong-stats', authMiddleware, ongOnly, async (req: Request, res: Resp
     `, [req.userId]);
 
     const campaigns = await pool.query(
-      'SELECT COUNT(*) as count FROM campaigns WHERE ong_id = $1',
+      'SELECT COUNT(*) as count FROM campaigns WHERE ong_id = $1 AND is_public = true',
       [req.userId]
     );
 

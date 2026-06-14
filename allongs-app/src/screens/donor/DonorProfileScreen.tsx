@@ -171,9 +171,16 @@ export default function DonorProfileScreen({ navigation }: any) {
                   {isLoadingStats ? (
                     <ActivityIndicator size="small" color="#0f5238" style={{ alignSelf: 'flex-start', marginBottom: 4 }} />
                   ) : (
-                    <Text className="text-3xl font-headline-extrabold text-on-surface">
-                      {formatCurrency(stats?.total_donated || 0)}
-                    </Text>
+                    <View style={{ width: '100%', overflow: 'hidden' }}>
+                      <Text
+                        className="text-3xl font-headline-extrabold text-on-surface"
+                        adjustsFontSizeToFit
+                        numberOfLines={1}
+                        minimumFontScale={0.4}
+                      >
+                        {formatCurrency(stats?.total_donated || 0)}
+                      </Text>
+                    </View>
                   )}
                   <Text className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">Total Contribuído</Text>
                 </View>

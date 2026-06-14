@@ -28,7 +28,9 @@ export default function ONGProfileScreen({ navigation }: any) {
         api.get('/donations/ong-stats'),
         api.get('/campaigns/my'),
       ]);
-      setStats(statsRes.data);
+      const statsData = statsRes.data;
+      statsData.campaign_count = campaignsRes.data.length;
+      setStats(statsData);
       setCampaigns(campaignsRes.data);
     } catch (err) {
       console.error('Failed to fetch ONG profile data', err);
@@ -245,7 +247,16 @@ export default function ONGProfileScreen({ navigation }: any) {
                         <Text className="font-headline-bold text-lg text-primary mt-2">Arrecadado</Text>
                       </View>
                       <View>
-                        <Text className="text-2xl font-headline-extrabold text-on-surface">{formatCurrency(stats.total_raised)}</Text>
+                        <View style={{ width: '100%', overflow: 'hidden' }}>
+                          <Text
+                            className="text-2xl font-headline-extrabold text-on-surface"
+                            adjustsFontSizeToFit
+                            numberOfLines={1}
+                            minimumFontScale={0.4}
+                          >
+                            {formatCurrency(stats.total_raised)}
+                          </Text>
+                        </View>
                         <Text className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">Total Recebido</Text>
                       </View>
                     </View>

@@ -19,7 +19,9 @@ export default function ONGHomeScreen({ navigation }: any) {
         api.get('/donations/ong-stats'),
         api.get('/campaigns/my'),
       ]);
-      setStats(statsRes.data);
+      const statsData = statsRes.data;
+      statsData.campaign_count = campaignsRes.data.length;
+      setStats(statsData);
       setMyCampaigns(campaignsRes.data);
     } catch (err) {
       console.error('Failed to fetch ONG data', err);
@@ -88,17 +90,17 @@ export default function ONGHomeScreen({ navigation }: any) {
               colors={['#0f5238', '#2d6a4f']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              className="p-8 relative"
+              style={{ padding: 24 }}
             >
-              <View className="z-10">
+              <View style={{ flexShrink: 1 }}>
                 <Text className="text-3xl font-headline-bold text-white mb-2 tracking-tight">
                   {getGreeting()}
                 </Text>
-                <Text className="mb-8" style={{ color: 'rgba(168, 231, 197, 0.8)', maxWidth: 280 }}>
+                <Text style={{ color: 'rgba(168, 231, 197, 0.8)', marginBottom: 24, flexShrink: 1 }}>
                   Sua causa está alcançando novos horizontes hoje. Veja como está o progresso das suas campanhas.
                 </Text>
                 <TouchableOpacity
-                  className="bg-surface-container-lowest flex-row items-center px-6 py-4 rounded-full shadow-lg self-start"
+                  className="bg-surface-container-lowest flex-row items-center px-5 py-3 rounded-full shadow-lg self-start"
                   onPress={() => navigation.navigate('NewCampaign')}
                   activeOpacity={0.8}
                 >
@@ -124,7 +126,15 @@ export default function ONGHomeScreen({ navigation }: any) {
                   </View>
                   <Text className="font-semibold text-on-surface-variant text-sm">Arrecadado</Text>
                 </View>
-                <Text className="text-2xl font-headline-bold text-on-surface">{formatCurrency(stats.total_raised)}</Text>
+                <Text
+                  className="text-2xl font-headline-bold text-on-surface"
+                  adjustsFontSizeToFit
+                  numberOfLines={1}
+                  minimumFontScale={0.7}
+                  style={{ flexShrink: 1, width: '100%' }}
+                >
+                  {formatCurrency(stats.total_raised)}
+                </Text>
                 <View className="flex-row items-center gap-1 mt-1">
                   <MaterialIcons name="trending-up" size={12} color="#16a34a" />
                   <Text className="text-xs font-medium" style={{ color: '#16a34a' }}>+12.4% este mês</Text>
@@ -215,7 +225,7 @@ export default function ONGHomeScreen({ navigation }: any) {
                 return (
                   <TouchableOpacity
                     key={campaign.id}
-                    className="bg-surface-container-lowest mb-6 rounded-3xl overflow-hidden shadow-md border border-outline-variant/20 relative"
+                    className="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-md border border-outline-variant/20 relative"
                     activeOpacity={0.9}
                     onPress={() => navigation.navigate('CampaignDetail', { id: campaign.id })}
                   >
